@@ -8,9 +8,9 @@
         <nav> 
             <h3>Congonharte</h3>
         </nav>
-        <button type="Button">
+        <a href="/login">
             Entrar
-        </button>
+        </a>
 
     </div>
 
