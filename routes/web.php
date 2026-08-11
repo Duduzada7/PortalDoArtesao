@@ -3,6 +3,7 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
 
+Route::get('/', function(){return view('welcome');}); //landing page
 Route::get('/welcome', [EventController::class,'index']);
 Route::get('/admin/eventos/criar', [EventController::class,'create']);
 Route::get('/Eventos/list', [EventController::class,'list']);
@@ -10,6 +11,8 @@ Route::get('/Eventos/delete', [EventController::class,'delete']);
 Route::post('/admin/eventos', [EventController::class, 'store']);
 Route::get('/admin/eventos', [EventController::class, 'index']);
 Route::delete('/admin/eventos/{id}', [EventController::class, 'destroy']);
+Route::get('/artesao', function(){return view('Artesaos.list');});
+
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
