@@ -27,7 +27,7 @@
                     <a href="/Eventos/list" class="nav-link">Eventos</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/Eventos/create" class="nav-link">Criar Eventos</a>
+                    <a href="/admin/eventos/criar" class="nav-link">Criar Eventos</a>
                 </li>
                 <li class="nav-item">
                     <a href="/Eventos/delete" class="nav-link">Excluir Eventos</a>

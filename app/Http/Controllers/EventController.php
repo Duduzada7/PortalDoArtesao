@@ -21,9 +21,9 @@ class EventController extends Controller
         return view('Eventos.delete');
     }
     public function list(){
-        $events = Evento::all();
-        return view('Eventos.list',['events'=>$events]);
-    }
+    $eventos = Evento::all();
+    return view('Eventos.list', ['eventos' => $eventos]);
+}
     public function store(Request $request)
 {
     if (session('user_type') !== 'adm') {

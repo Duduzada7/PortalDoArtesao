@@ -8,7 +8,7 @@ use App\Http\Controllers\ArtesaoController;
 Route::view('/', 'welcome');
 Route::get('/welcome', [EventController::class,'index']);
 Route::get('/admin/eventos/criar', [EventController::class,'create']);
-Route::get('/Eventos/list', [EventController::class,'list']);
+Route::get('/Eventos/list', [EventController::class,'index'])->name('eventos.list');
 Route::get('/Eventos/delete', [EventController::class,'delete']);
 Route::post('/admin/eventos', [EventController::class, 'store']);
 Route::get('/admin/eventos', [EventController::class, 'index']);
