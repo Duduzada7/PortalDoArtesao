@@ -3,6 +3,7 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdmController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\ArtesaoController;
 
 Route::view('/', 'welcome');
 Route::get('/welcome', [EventController::class,'index']);
@@ -12,11 +13,13 @@ Route::get('/Eventos/delete', [EventController::class,'delete']);
 Route::post('/admin/eventos', [EventController::class, 'store']);
 Route::get('/admin/eventos', [EventController::class, 'index']);
 Route::delete('/admin/eventos/{id}', [EventController::class, 'destroy']);
-Route::view('/artesao', 'Artesaos.list');
-
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
+
+//fluxo de artesaos
+Route::get('/artesao', [ArtesaoController::class, 'index']);
+Route::get('/artesao/cadastrar', [ArtesaoController::class, 'create']);
 
 // Painel do Admin
 Route::get('/admin/dashboard', function () {
