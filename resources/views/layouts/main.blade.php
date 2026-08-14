@@ -33,7 +33,7 @@
                     <a href="/Eventos/delete" class="nav-link">Excluir Eventos</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/" class="nav-link">Cadastrar</a>
+                <a href="/artesao/cadastrar" class="nav-link">Cadastrar</a>
                 </li>
             </ul>
         </div>
