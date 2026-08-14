@@ -11,4 +11,9 @@ class Adm extends Model
 
     protected $table = 'adm';
     protected $primaryKey = 'Id_ADM';
+
+    protected $fillable = [
+        'Nome',
+        'Email',
+    ];
 }
