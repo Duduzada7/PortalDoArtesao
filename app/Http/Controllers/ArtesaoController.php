@@ -36,6 +36,7 @@ class ArtesaoController extends Controller{
             'Email'     => 'required|email|unique:artesao,Email',
             'Telefone'  => 'required|string|max:20',
             'Endereco'  => 'nullable|string|max>255',
+            'especialidades' => 'nullable|array',
         ], [
             'Email.unique'  =>  'Este e-mail já está cadastrado.'
         ]);
@@ -49,7 +50,55 @@ class ArtesaoController extends Controller{
         $artesao->StatusAprovacao = 'Pendente'; //status inicial
         $artesao->save();
 
+        //salva as especialidades selecionadas na tabela pivô
+
+        if($request->has('especialidades')){
+            $artesao->especialidades()->attach($request->especialidades);
+        }
+
         return redirect('/login')->with('msg', 'Cadastro realizado com sucesso! Aguarde a aprovação.');
+    }
+
+    //update: exibe o formulário de edição
+    public function edit($id){
+        $artesao = Artesao::with('especialidades')->findOrFail($id);
+        $especialidades = Especialidaes::all();
+
+        return view('Artesaos.edit', compact('artesao', 'especialidades'));
+    }
+
+    //update: salva as alterações do artesão
+    public function update(Request $request, $id){
+        $artesao = Artesao::findOrFail($id);
+
+        $request->validate([
+            'Nome'           => 'required|string|max:255',
+            'Email'          => 'required|email|unique:artesao,Email,' . $id . ',ID_Artesao',
+            'Telefone'       => 'required|string|max:20',
+            'Endereco'       => 'nullable|string|max:255',
+            'especialidades' => 'nullable|array',
+        ], [
+            'Email.unique'   => 'Este e-mail já está cadastrado por outro artesão.'
+        ]);
+
+        $artesao->Nome = $request->Nome;
+        $artesao->Email = $request->Email;
+        $artesao->Telefone = $request->Telefone;
+        $artesao->Endereco = $request->Endereco;
+        $artesao->save();
+
+        //atualiza as especialidades na tablea pivô (sync substitui os vínculos antigos)
+        $artesao->especialidades()->sync($request->input('especialidades', []));
+
+        return redirect('/artesao')->with('msg', 'Artesão atualizado com sucesso!');
+    }
+
+    //delete: remove o artesão
+    public function destroy($id){
+        $artesao = Artesao::findOrFail($id);
+        $artesao->delete();
+
+        return redirect('/artesao')->with('msg', 'Artesão removido com sucesso!');
     }
 
     //painel/dashboard do artesao logado

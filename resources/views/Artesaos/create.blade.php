@@ -38,7 +38,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="Endereco" class="form-label fw-bold">Endereço/Cidade: <span class="text-danger">*</span></label>
-                    <input type="Endereco" class="form-control" id="Endereco" name="Endereco" value="{{ old('Endereco')}}" required placeholder= "Ex: Bairro Centro, Congonhas - MG">
+                    <input type="text" class="form-control" id="Endereco" name="Endereco" value="{{ old('Endereco')}}" required placeholder= "Ex: Bairro Centro, Congonhas - MG">
                 </div>
 
                 {{-- Especialidades --}}

@@ -17,9 +17,17 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 
-//fluxo de artesaos
+//fluxo CRUD de artesaos
 Route::get('/artesao', [ArtesaoController::class, 'index']);
 Route::get('/artesao/cadastrar', [ArtesaoController::class, 'create']);
+Route::post('/artesao/cadastrar', [ArtesaoController::class, 'store']);
+Route::get('/artesao/editar/{id}', [ArtesaoController::class, 'edit']);
+Route::put('/artesao/{id}', [ArtesaoController::class, 'update']);
+Route::delete('/artesao/{id}', [ArtesaoController::class, 'destroy']);
+
+//area logada do artesao
+Route::get('/artesao/dashboard', [ArtesaoController::class, 'dashboard']);
+Route::post('/artesao/candidatar/{eventoId}', [ArtesaoController::class, 'candidatar']);
 
 // Painel do Admin
 Route::get('/admin/dashboard', function () {
