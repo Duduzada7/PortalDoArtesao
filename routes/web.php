@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdmController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ArtesaoController;
+use App\Http\Controllers\FilaController;
 
 Route::view('/', 'welcome');
 Route::get('/welcome', [EventController::class,'index']);
@@ -41,3 +42,7 @@ Route::get('/admin/dashboard', function () {
 Route::get('/admin/gerenciar-adms', [AdmController::class, 'index']);
 Route::post('/admin/gerenciar-adms', [AdmController::class, 'store']);
 Route::delete('/admin/gerenciar-adms/{id}', [AdmController::class, 'destroy']);
+
+// Gerenciamento da fila
+Route::get('/admin/fila', [FilaController::class, 'index']);
+Route::post('/admin/fila/mover-final/{id}', [FilaController::class, 'moverParaFinal']);

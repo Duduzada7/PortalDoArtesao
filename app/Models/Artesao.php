@@ -20,8 +20,11 @@ class Artesao extends Model
         'Nome',
         'Telefone',
         'Email',
-        'Endereco',
+        'Rua',
+        'Numero',
+        'Bairro',
         'Nivel',
+        'posicao_fila',
         'StatusAprovacao',
         'Aprovado_por',
     ];

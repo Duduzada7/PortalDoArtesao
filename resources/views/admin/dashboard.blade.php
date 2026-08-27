@@ -40,7 +40,18 @@
                 </div>
             </div>
         </div>
-
+        <!-- Ver a fila -->
+        <div class="col-md-4 mb-4">
+    <div class="card h-100 shadow-sm border-0">
+        <div class="card-body text-center d-flex flex-column justify-content-between">
+            <div>
+                <h5 class="card-title fw-bold">Fila de Prioridade</h5>
+                <p class="card-text text-muted">Acompanhe a ordem e rotatividade dos artesãos credenciados.</p>
+            </div>
+            <a href="/admin/fila" class="btn btn-dark w-100 mt-3">Ver Fila</a>
+        </div>
+    </div>
+</div>
         <!-- Card 3: Aprovações -->
         <div class="col-md-4 mb-3">
             <div class="card text-center p-3 shadow-sm h-100">
