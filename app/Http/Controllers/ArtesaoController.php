@@ -111,7 +111,7 @@ class ArtesaoController extends Controller{
         $artesao = Artesao::with('eventos')->findOrFail(session('user_id'));
         $eventosDisponiveis = Evento::all();
 
-        return view('artesao.dashboard', compact('artesao', 'eventosDisponiveis'));
+        return view('Artesaos.dashboard', compact('artesao', 'eventosDisponiveis'));
     }
 
     //candidatar-se a um evento
