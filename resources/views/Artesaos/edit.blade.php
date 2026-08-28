@@ -39,9 +39,20 @@
                     <input type="text" class="form-control" id="Telefone" name="Telefone" value="{{ old('Telefone', $artesao->Telefone) }}" required>
                 </div>
 
+                <div class="row">
+                    <div class="col-md-8 mb-3">
+                        <label for="Rua" class="form-label fw-bold">Rua / Logradouro:</label>
+                        <input type="text" class="form-control" id="Rua" name="Rua" value="{{ old('Rua', $artesao->Rua) }}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="Numero" class="form-label fw-bold">Número:</label>
+                        <input type="text" class="form-control" id="Numero" name="Numero" value="{{ old('Numero', $artesao->Numero) }}">
+                    </div>
+                </div>
+
                 <div class="mb-3">
-                    <label for="Endereco" class="form-label fw-bold">Endereço/Cidade:</label>
-                    <input type="text" class="form-control" id="Endereco" name="Endereco" value="{{ old('Endereco', $artesao->Endereco) }}">
+                    <label for="Bairro" class="form-label fw-bold">Bairro:</label>
+                    <input type="text" class="form-control" id="Bairro" name="Bairro" value="{{ old('Bairro', $artesao->Bairro) }}">
                 </div>
 
                 <div class="mb-3">

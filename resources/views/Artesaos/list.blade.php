@@ -28,8 +28,7 @@
                             <strong>Email:</strong> {{ $artesao->Email }}
                         </p>
                         <p class="card-text text-muted mb-3">
-                            <strong>Endereço:</strong> {{ $artesao->Endereco ?? 'Não informado' }}
-                        </p>
+<strong>Endereço:</strong> {{ $artesao->Rua ? $artesao->Rua . ', ' . $artesao->Numero . ' - ' . $artesao->Bairro : 'Não informado' }}                        </p>
 
                         <h6>Especialidades:</h6>
                         <ul class="mb-3">

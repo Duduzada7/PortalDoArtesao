@@ -52,16 +52,17 @@
         </div>
     </div>
 </div>
-        <!-- Card 3: Aprovações -->
-        <div class="col-md-4 mb-3">
-            <div class="card text-center p-3 shadow-sm h-100">
-                <h3>Aprovações</h3>
-                <p class="text-muted">Avalie cadastros de artesãos pendentes.</p>
-                <div class="mt-auto">
-                    <a href="#" class="btn btn-warning w-100 disabled">Ver Pendentes</a>
-                </div>
-            </div>
+      
+       <!-- Card 3: Aprovações -->
+<div class="col-md-4 mb-3">
+    <div class="card text-center p-3 shadow-sm h-100">
+        <h3>Aprovações</h3>
+        <p class="text-muted">Avalie cadastros de artesãos e candidaturas pendentes.</p>
+        <div class="mt-auto">
+            <a href="/admin/aprovacoes" class="btn btn-warning w-100 fw-bold">Ver Pendentes</a>
         </div>
+    </div>
+</div>
     </div>
     <div class="col-md-4 mb-3">
     <div class="card text-center p-3 shadow-sm h-100">
