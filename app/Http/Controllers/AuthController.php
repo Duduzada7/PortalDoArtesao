@@ -3,58 +3,45 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Artesao;
 use App\Models\Adm;
 
 class AuthController extends Controller
 {
-    // Exibe a tela de login
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    // Processa o login (POST)
     public function login(Request $request)
     {
         $request->validate([
-            'email'        => 'required|email',
-            'tipo_usuario' => 'required|string',
+            'Email' => 'required|email',
+            'Senha' => 'required|string',
         ]);
 
-        $email = $request->input('email');
-        $tipo  = $request->input('tipo_usuario'); // Captura exata de name="tipo_usuario"
+        $email = $request->input('Email');
+        $senha = $request->input('Senha');
 
-        // -------------------------------------------------------------
-        // FLUXO 1: LOGIN COMO ADMINISTRADOR
-        // -------------------------------------------------------------
-        if ($tipo === 'adm') {
-            $adm = Adm::where('Email', $email)->first();
+        $adm = Adm::where('Email', $email)->first();
 
-            if ($adm) {
-                session([
-                    'user_id'   => $adm->ID_ADM ?? $adm->id,
-                    'user_name' => $adm->Nome ?? 'Administrador',
-                    'user_type' => 'adm'
-                ]);
+        if ($adm && Hash::check($senha, $adm->Senha)) {
+            session([
+                'user_id'   => $adm->ID_ADM ?? $adm->id,
+                'user_name' => $adm->Nome ?? 'Administrador',
+                'user_type' => 'adm'
+            ]);
 
-                return redirect('/admin/dashboard');
-            }
-
-            return redirect()->back()->with('error', 'Credenciais de Administrador inválidas.');
+            return redirect('/admin/dashboard');
         }
 
-        // -------------------------------------------------------------
-        // FLUXO 2: LOGIN COMO ARTESÃO
-        // -------------------------------------------------------------
-        if ($tipo === 'artesao') {
-            $artesao = Artesao::where('Email', $email)->first();
+  
+        $artesao = Artesao::where('Email', $email)->first();
 
-            if (!$artesao) {
-                return redirect()->back()->with('error', 'E-mail de Artesão não encontrado.');
-            }
+        if ($artesao && Hash::check($senha, $artesao->Senha)) {
 
-            // Checagens de Status
+     
             if ($artesao->StatusAprovacao === 'pendente') {
                 return redirect()->back()->with('error', 'Seu cadastro está em análise pela administração. Aguarde a aprovação para acessar.');
             }
@@ -63,9 +50,9 @@ class AuthController extends Controller
                 return redirect()->back()->with('error', 'Seu cadastro foi recusado pela administração.');
             }
 
-            // Login liberado
+         
             session([
-                'user_id'   => $artesao->ID_Artesao,
+                'user_id'   => $artesao->ID_Artesao ?? $artesao->id,
                 'user_name' => $artesao->Nome,
                 'user_type' => 'artesao'
             ]);
@@ -73,12 +60,13 @@ class AuthController extends Controller
             return redirect('/artesao/dashboard');
         }
 
-        return redirect()->back()->with('error', 'Selecione um tipo de acesso válido.');
+       
+        return redirect()->back()->with('error', 'E-mail ou senha incorretos.');
     }
 
     public function logout()
     {
         session()->forget(['user_id', 'user_name', 'user_type']);
-        return redirect('/login');
+        return redirect('/login')->with('msg', 'Sessão encerrada com sucesso.');
     }
 }

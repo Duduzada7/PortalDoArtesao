@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Models\Artesao;
 use App\Models\Evento;
@@ -25,38 +26,41 @@ class ArtesaoController extends Controller
 
     // Salva um artesão no banco
     public function store(Request $request)
-    {
-        // Validação de dados com campos de endereço ajustados
-        $request->validate([
-            'Nome'           => 'required|string|max:255',
-            'Email'          => 'required|email|unique:artesao,Email',
-            'Telefone'       => 'required|string|max:20',
-            'Rua'            => 'nullable|string|max:255',
-            'Numero'         => 'nullable|string|max:20',
-            'Bairro'         => 'nullable|string|max:255',
-            'especialidades' => 'nullable|array',
-        ], [
-            'Email.unique'   => 'Este e-mail já está cadastrado.'
-        ]);
+{
+    // 1. Adicionamos a Senha nas regras de validação
+    $request->validate([
+        'Nome'           => 'required|string|max:255',
+        'Email'          => 'required|email|unique:artesao,Email',
+        'Senha'          => 'required|string|min:6', // <-- Adicionado
+        'Telefone'       => 'required|string|max:20',
+        'Rua'            => 'nullable|string|max:255',
+        'Numero'         => 'nullable|string|max:20',
+        'Bairro'         => 'nullable|string|max:255',
+        'especialidades' => 'nullable|array',
+    ], [
+        'Email.unique'   => 'Este e-mail já está cadastrado.',
+        'Senha.min'      => 'A senha deve ter no mínimo 6 caracteres.'
+    ]);
 
-        // Criação do registro
-        $artesao = new Artesao();
-        $artesao->Nome = $request->Nome;
-        $artesao->Email = $request->Email;
-        $artesao->Telefone = $request->Telefone;
-        $artesao->Rua = $request->Rua;
-        $artesao->Numero = $request->Numero;
-        $artesao->Bairro = $request->Bairro;
-        $artesao->StatusAprovacao = 'pendente'; // Em minúsculo para padronização
-        $artesao->save();
+    // 2. Criação do registro guardando o Hash da Senha
+    $artesao = new Artesao();
+    $artesao->Nome = $request->Nome;
+    $artesao->Email = $request->Email;
+    $artesao->Senha = Hash::make($request->Senha); // <-- Adicionado com Hash::make()
+    $artesao->Telefone = $request->Telefone;
+    $artesao->Rua = $request->Rua;
+    $artesao->Numero = $request->Numero;
+    $artesao->Bairro = $request->Bairro;
+    $artesao->StatusAprovacao = 'pendente';
+    $artesao->save();
 
-        // Salva as especialidades selecionadas na tabela pivô
-        if ($request->has('especialidades')) {
-            $artesao->especialidades()->attach($request->especialidades);
-        }
-
-        return redirect('/login')->with('msg', 'Cadastro realizado com sucesso! Aguarde a aprovação.');
+    // Salva as especialidades selecionadas na tabela pivô
+    if ($request->has('especialidades')) {
+        $artesao->especialidades()->attach($request->especialidades);
     }
+
+    return redirect('/login')->with('msg', 'Cadastro realizado com sucesso! Aguarde a aprovação.');
+}
 
     // Form de Edição
     public function edit($id)
@@ -90,10 +94,13 @@ class ArtesaoController extends Controller
         $artesao->Rua = $request->Rua;
         $artesao->Numero = $request->Numero;
         $artesao->Bairro = $request->Bairro;
+        if ($request->filled('Senha')) {
+    $artesao->Senha = Hash::make($request->Senha);
+}
         $artesao->save();
 
         $artesao->especialidades()->sync($request->input('especialidades', []));
-
+    
         return redirect('/artesao')->with('msg', 'Artesão atualizado com sucesso!');
     }
 

@@ -52,6 +52,22 @@
         </div>
     </div>
 </div>
+<!-- Card Gerenciar Especialidades -->
+<div class="col-md-4 mb-4">
+    <div class="card shadow-sm h-100">
+        <div class="card-body text-center d-flex flex-column justify-content-between">
+            <div>
+                <h4 class="card-title fw-bold">Especialidades</h4>
+                <p class="card-text text-muted">
+                    Cadastre e gerencie as áreas de atuação dos artesãos do sistema.
+                </p>
+            </div>
+            <a href="/admin/especialidades" class="btn btn-purple text-white w-100 fw-bold mt-3" style="background-color: #6f42c1;">
+                Gerenciar Especialidades
+            </a>
+        </div>
+    </div>
+</div>
       
        <!-- Card 3: Aprovações -->
 <div class="col-md-4 mb-3">

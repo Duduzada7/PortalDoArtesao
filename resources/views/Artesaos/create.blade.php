@@ -67,6 +67,10 @@
                         @endforelse
                     </div>
                 </div>
+                <div class="form-group mb-3">
+    <label for="Senha" class="form-label fw-bold">Senha: <span class="text-danger">*</span></label>
+    <input type="password" class="form-control" id="Senha" name="Senha" required>
+</div>
 
                 <button type="submit" class="btn btn-primary w-100">Cadastrar</button>
             </form>

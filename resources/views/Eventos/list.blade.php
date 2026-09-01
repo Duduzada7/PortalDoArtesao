@@ -28,7 +28,8 @@
                         <th>Classificação</th>
                         <th>Vagas</th>
                         <th>Localização</th>
-                        <th>Data / Horário</th>
+                        <th>Início</th>
+                        <th>Término</th>
                         <th class="text-center">Ações</th>
                     </tr>
                 </thead>
@@ -43,14 +44,23 @@
                             <td>
                                 {{ $evento->Dia ? date('d/m/Y H:i', strtotime($evento->Dia)) : '-' }}
                             </td>
+                            <td>
+                                {{ $evento->DataFim ? date('d/m/Y H:i', strtotime($evento->DataFim)) : '-' }}
+                            </td>
                             <td class="text-center">
-                                <form action="/admin/eventos/{{ $evento->ID_Evento }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este evento?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        Excluir
-                                    </button>
-                                </form>
+                                <div class="d-flex justify-content-center gap-1">
+                                    <a href="/admin/eventos/{{ $evento->ID_Evento }}/editar" class="btn btn-sm btn-outline-warning">
+                                        Editar
+                                    </a>
+                                    
+                                    <form action="/admin/eventos/{{ $evento->ID_Evento }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este evento?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            Excluir
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @endforeach
