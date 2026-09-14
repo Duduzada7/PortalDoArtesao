@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class ArtesaoSeeder extends Seeder
 {
@@ -46,6 +47,15 @@ class ArtesaoSeeder extends Seeder
                 'posicao_fila' => 3,
                 'created_at' => now(),
             ],
+            [
+                'Nome' => 'Artesão Teste',
+                'Email' => 'teste@email.com',
+                'Telefone' => '31999999999',
+                'Senha' => Hash::make('123456'), // Senha definida como 123456
+                'StatusAprovacao' => 'aprovado',
+                'posicao_fila' => 1,
+                'created_at' => now(),
+            ]
         ]);
     }
 }

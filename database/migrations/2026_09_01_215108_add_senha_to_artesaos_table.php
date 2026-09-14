@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
 {
-    Schema::table('artesaos', function (Blueprint $table) {
+    Schema::table('artesao', function (Blueprint $table) {
         // Adiciona o campo Senha (string para suportar o hash do bcrypt)
         $table->string('Senha')->after('Email'); 
     });
@@ -19,7 +19,7 @@ return new class extends Migration
 
 public function down(): void
 {
-    Schema::table('artesaos', function (Blueprint $table) {
+    Schema::table('artesao', function (Blueprint $table) {
         $table->dropColumn('Senha');
     });
 }
