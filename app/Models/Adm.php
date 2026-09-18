@@ -11,9 +11,11 @@ class Adm extends Model
 
     protected $table = 'adm';
     protected $primaryKey = 'Id_ADM';
+    public $timestamps = false;
 
     protected $fillable = [
         'Nome',
         'Email',
+        'Senha',
     ];
 }

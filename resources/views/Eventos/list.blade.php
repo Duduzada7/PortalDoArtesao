@@ -3,74 +3,85 @@
 @section('title', 'Listar Eventos - Portal do Artesão')
 
 @section('content')
-<div class="container my-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Listar Eventos</h2>
-        <div>
-            <a href="/admin/dashboard" class="btn btn-outline-secondary me-2">Voltar ao Painel</a>
-            <a href="/admin/eventos/criar" class="btn btn-primary">+ Criar Novo Evento</a>
+    <div class="container my-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Listar Eventos</h2>
+            <div>
+                <a href="/admin/dashboard" class="btn btn-outline-secondary me-2">Voltar ao Painel</a>
+                <a href="/admin/eventos/criar" class="btn btn-primary">+ Criar Novo Evento</a>
+            </div>
         </div>
-    </div>
 
-    @if(session('msg'))
-        <div class="alert alert-success">
-            {{ session('msg') }}
-        </div>
-    @endif
+        @if(session('msg'))
+            <div class="alert alert-success">
+                {{ session('msg') }}
+            </div>
+        @endif
 
-    @if(count($eventos) > 0)
-        <div class="table-responsive shadow-sm rounded">
-            <table class="table table-striped table-hover align-middle mb-0">
-                <thead class="table-dark">
-                    <tr>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>Classificação</th>
-                        <th>Vagas</th>
-                        <th>Localização</th>
-                        <th>Início</th>
-                        <th>Término</th>
-                        <th class="text-center">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($eventos as $evento)
+        @if(count($eventos) > 0)
+            <div class="table-responsive shadow-sm rounded">
+                <table class="table table-striped table-hover align-middle mb-0">
+                    <thead class="table-dark">
                         <tr>
-                            <td>{{ $evento->ID_Evento }}</td>
-                            <td class="fw-bold">{{ $evento->Nome }}</td>
-                            <td>{{ $evento->Classificacao ?? '-' }}</td>
-                            <td>{{ $evento->Vagas ?? '-' }}</td>
-                            <td>{{ $evento->Localizacao ?? '-' }}</td>
-                            <td>
-                                {{ $evento->Dia ? date('d/m/Y H:i', strtotime($evento->Dia)) : '-' }}
-                            </td>
-                            <td>
-                                {{ $evento->DataFim ? date('d/m/Y H:i', strtotime($evento->DataFim)) : '-' }}
-                            </td>
-                            <td class="text-center">
-                                <div class="d-flex justify-content-center gap-1">
-                                    <a href="/admin/eventos/{{ $evento->ID_Evento }}/editar" class="btn btn-sm btn-outline-warning">
-                                        Editar
-                                    </a>
-                                    
-                                    <form action="/admin/eventos/{{ $evento->ID_Evento }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este evento?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                                            Excluir
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Classificação</th>
+                            <th>Vagas</th>
+                            <th>Localização</th>
+                            <th>Início</th>
+                            <th>Término</th>
+                            <th class="text-center">Ações</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    @else
-        <div class="alert alert-info text-center">
-            Nenhum evento cadastrado no momento. <a href="/admin/eventos/criar">Clique aqui</a> para criar um.
-        </div>
-    @endif
-</div>
+                    </thead>
+                    <tbody>
+                        @foreach ($eventos as $evento)
+                            <tr>
+                                <td>{{ $evento->ID_Evento }}</td>
+                                <td class="fw-bold">{{ $evento->Nome }}</td>
+                                <td>{{ $evento->Classificacao ?? '-' }}</td>
+                                <td>{{ $evento->Vagas ?? '-' }}</td>
+                                <td>{{ $evento->Localizacao ?? '-' }}</td>
+                                <td>
+                                    {{ $evento->Dia ? date('d/m/Y H:i', strtotime($evento->Dia)) : '-' }}
+                                </td>
+                                <td>
+                                    {{ $evento->DataFim ? date('d/m/Y H:i', strtotime($evento->DataFim)) : '-' }}
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center gap-1">
+                                        <a href="/admin/eventos/{{ $evento->ID_Evento }}/editar"
+                                            class="btn btn-sm btn-outline-warning">
+                                            Editar
+                                        </a>
+
+                                        <form action="/admin/eventos/{{ $evento->ID_Evento }}" method="POST"
+                                            onsubmit="return confirm('Tem certeza que deseja excluir este evento?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                Excluir
+                                            </button>
+                                        </form>
+
+                                        <!-- Botão Encerrar adicionado -->
+                                        <form action="/admin/eventos/{{ $evento->ID_Evento }}/encerrar" method="POST"
+                                            onsubmit="return confirm('Tem certeza que deseja encerrar este evento?');">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-outline-dark">
+                                                Encerrar
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @else
+            <div class="alert alert-info text-center">
+                Nenhum evento cadastrado no momento. <a href="/admin/eventos/criar">Clique aqui</a> para criar um.
+            </div>
+        @endif
+    </div>
 @endsection

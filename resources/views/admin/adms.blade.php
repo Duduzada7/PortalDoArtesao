@@ -81,12 +81,12 @@
                             <tbody>
                                 @forelse($adms as $adm)
                                     <tr>
-                                        <td>{{ $adm->ID_Adm ?? $adm->id }}</td>
+                                        <td>{{ $adm->Id_ADM ?? $adm->id }}</td>
                                         <td>{{ $adm->Nome }}</td>
                                         <td>{{ $adm->Email }}</td>
                                         <td class="text-end">
-                                            @if($adm->ID_Adm != session('user_id') && $adm->id != session('user_id'))
-                                                <form action="/admin/gerenciar-adms/{{ $adm->ID_Adm ?? $adm->id }}" method="POST" class="d-inline" onsubmit="return confirm('Tem certeza que deseja remover este administrador?')">
+                                            @if($adm->Id_ADM != session('user_id') && $adm->id != session('user_id'))
+                                                <form action="/admin/gerenciar-adms/{{ $adm->Id_ADM ?? $adm->id }}" method="POST" class="d-inline" onsubmit="return confirm('Tem certeza que deseja remover este administrador?')">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-sm btn-outline-danger">Remover</button>

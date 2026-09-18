@@ -31,9 +31,6 @@ Route::delete('/artesao/{id}', [ArtesaoController::class, 'destroy']);
 Route::get('/artesao/dashboard', [ArtesaoController::class, 'dashboard']);
 Route::post('/artesao/candidatar/{id}', [ArtesaoController::class, 'candidatarEvento']);
 
-// --------------------------------------------------------------------------
-// PAINEL ADMINISTRATIVO (Protegido por verificação de sessão)
-// --------------------------------------------------------------------------
 Route::prefix('admin')->group(function () {
 
     // Dashboard
@@ -62,6 +59,7 @@ Route::prefix('admin')->group(function () {
     Route::get('/eventos/{id}/editar', [EventController::class, 'edit']);
     Route::put('/eventos/{id}', [EventController::class, 'update']);
     Route::delete('/eventos/{id}', [EventController::class, 'destroy']);
+    Route::post('/eventos/{id}/encerrar', [EventController::class, 'encerrar']); // Rota ajustada (sem repetir /admin)
 
     // Gerenciamento de ADM
     Route::get('/gerenciar-adms', [AdmController::class, 'index']);
@@ -69,7 +67,7 @@ Route::prefix('admin')->group(function () {
     Route::delete('/gerenciar-adms/{id}', [AdmController::class, 'destroy']);
 
     // Gerenciamento da Fila
-    Route::get('/fila', [FilaController::class, 'index']);
+    Route::get('/fila', [FilaController::class, 'index'])->name('admin.fila');
     Route::post('/fila/mover-final/{id}', [FilaController::class, 'moverParaFinal']);
 
     // Aprovações
