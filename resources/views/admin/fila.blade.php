@@ -62,7 +62,7 @@
             </h2>
             <p class="text-muted mb-0">
                 Artesãos na posição 1 têm mais prioridade para serem selecionados. Após participar de um evento, o artesão
-                vai para o final da fila[cite: 7].
+                vai para o final da fila.
             </p>
         </div>
 
@@ -139,7 +139,7 @@
             <div>
                 <strong>Como funciona:</strong> Quando um artesão é aprovado para participar de um evento, ele é
                 automaticamente movido para o final da fila. Isso garante equidade e rotatividade na participação dos
-                artesãos[cite: 7].
+                artesãos.
             </div>
         </div>
     </div>

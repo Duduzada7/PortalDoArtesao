@@ -13,15 +13,15 @@ class Evento extends Model
     protected $fillable = [
         'Nome',
         'Descricao',
-        'Dia',                    // Nome correto no banco de dados
+        'Dia',                    
         'DataFim',
-        'Rua',                    // Nome correto no banco de dados[cite: 5]
-        'Bairro',                 // Nome correto no banco de dados[cite: 5]
-        'Numero',                 // Nome correto no banco de dados[cite: 5]
-        'Vagas',                  // Nome correto no banco de dados[cite: 5]
-        'status',                 // Em minúsculo como no banco[cite: 5]
-        'idADM',                  // Nome correto no banco de dados[cite: 5]
-        'especialidades_vagas',   // Nome correto no banco de dados[cite: 5]
+        'Rua',                    
+        'Bairro',                 
+        'Numero',                 
+        'Vagas',                  
+        'status',                 
+        'idADM',                  
+        'especialidades_vagas',   
     ];
 
     public function artesaos()
