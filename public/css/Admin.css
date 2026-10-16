@@ -1,0 +1,179 @@
+/* ==========================================================
+   Congonharte – painel administrativo
+   Salvar em: public/css/admin.css
+   ========================================================== */
+
+:root {
+    --rust: #bf4a1a;
+    --cream: #f7f4f0;
+    --white: #fff;
+    --ink: #2a1a12;
+    --muted: #6b5d55;
+    --line: #ece5de;
+    --ok: #0f9d6a;
+    --no: #dc2626;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+ul, p, h1, h2, h3 { margin: 0; padding: 0; }
+ul { list-style: none; }
+button { font-family: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid #f5a272; outline-offset: 2px; }
+
+.sr-only {
+    position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+/* ---------- Estrutura ---------- */
+.shell { display: grid; grid-template-columns: 255px minmax(0, 1fr); min-height: 100vh; }
+.main { padding: 30px 30px 60px; }
+.page { max-width: 750px; }
+
+/* ---------- Sidebar ---------- */
+.side {
+    background: var(--white); border-right: 1px solid var(--line);
+    display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;
+}
+.side__top { padding: 22px 16px 18px; border-bottom: 1px solid var(--line); }
+.side__brand { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 600; color: var(--rust); padding: 0 4px; }
+.side__user {
+    margin-top: 22px; padding: 14px; border-radius: 14px; background: #fbf0e8;
+    display: flex; flex-direction: column; gap: 3px;
+}
+.side__user small { font-size: 10px; color: var(--muted); }
+.side__user strong { font-size: 13px; font-weight: 600; }
+.side__user span { font-size: 10px; color: var(--rust); overflow-wrap: anywhere; }
+
+.side__nav { padding: 12px 8px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.side__link {
+    display: flex; align-items: center; gap: 14px; padding: 13px 16px;
+    border-radius: 12px; font-size: 12px; font-weight: 600;
+}
+.side__link:hover { background: #faf5f0; }
+.side__link.is-active { background: #fbeee6; color: var(--rust); }
+.side__icon { width: 18px; text-align: center; }
+.side__count {
+    margin-left: auto; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px;
+    background: var(--rust); color: var(--white); font-size: 10px; font-weight: 700;
+    display: grid; place-items: center;
+}
+
+.side__bottom { margin: 0; padding: 16px 20px; border-top: 1px solid var(--line); }
+.side__logout {
+    display: flex; align-items: center; gap: 12px; padding: 0; border: 0; background: none;
+    font-size: 12px; font-weight: 600; color: var(--rust);
+}
+
+/* ---------- Topo da página ---------- */
+.crumbs { font-size: 10px; font-weight: 500; color: var(--muted); margin-bottom: 22px; }
+.flash {
+    margin-bottom: 16px; padding: 12px 16px; border-radius: 12px; font-size: 12px; font-weight: 500;
+    background: #d6f5e3; color: #0f6b3f; border: 1px solid #b4e9cb;
+}
+
+/* ---------- Cadastros pendentes ---------- */
+.pending {
+    background: #fffbea; border: 1px solid #f3dc8c; border-radius: 16px;
+    padding: 16px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 12px;
+}
+.pending__title { font-size: 12px; font-weight: 600; color: #7a3a0c; padding-left: 4px; }
+
+/* ---------- Pessoa (card de artesão) ---------- */
+.list { display: flex; flex-direction: column; gap: 12px; }
+
+.person {
+    display: flex; gap: 12px; align-items: flex-start; padding: 14px;
+    background: var(--white); border: 1px solid var(--line); border-radius: 16px;
+}
+.person--pending { border-color: #f3e6b4; }
+
+.avatar {
+    flex: none; width: 40px; height: 40px; border-radius: 10px;
+    display: grid; place-items: center; color: var(--white); font-size: 14px; font-weight: 700;
+}
+.person__main { flex: 1; min-width: 0; }
+.person__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+.person__head h3 { font-size: 12px; font-weight: 600; }
+.person__badges { display: flex; gap: 6px; }
+.person__mail { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.tag {
+    background: var(--c, var(--rust)); color: var(--white);
+    font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
+}
+
+.person__meta { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 10px; font-size: 10px; color: var(--muted); }
+
+/* ---------- Selos ---------- */
+.level, .status {
+    display: inline-block; font-size: 10px; font-weight: 600; padding: 3px 9px;
+    border-radius: 999px; white-space: nowrap;
+}
+.level--novato          { background: #eeeeee; color: #4b4b4b; }
+.level--aprendiz        { background: #d6f5e3; color: #0f7a45; }
+.level--artesao         { background: #dbe8fe; color: #1d4ed8; }
+.level--artesao-senior  { background: #ebe4fe; color: #6d28d9; }
+.level--mestre          { background: #fdf0c4; color: #a16207; }
+.level--grande-mestre   { background: #fde0e0; color: #be123c; }
+.status--ativo          { background: #d6f5e3; color: #0f7a45; }
+.status--pendente       { background: #fdf0c4; color: #a16207; }
+
+/* ---------- Aprovar / Recusar ---------- */
+.actions { display: flex; gap: 8px; margin-top: 12px; }
+.actions form { flex: 1; margin: 0; }
+.btn {
+    width: 100%; height: 30px; border: 0; border-radius: 999px;
+    font-size: 10px; font-weight: 600; color: var(--white);
+}
+.btn--ok { background: var(--ok); }
+.btn--ok:hover { background: #0b8558; }
+.btn--no { background: var(--no); }
+.btn--no:hover { background: #b91c1c; }
+
+/* ---------- Busca e filtros ---------- */
+.toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 18px; flex-wrap: wrap; }
+.toolbar__search { flex: 1; min-width: 220px; }
+.toolbar__search form {
+    display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px;
+    background: var(--white); border: 1px solid var(--line); border-radius: 12px;
+}
+.toolbar__search form:focus-within { border-color: var(--rust); }
+.toolbar__search input {
+    flex: 1; border: 0; outline: 0; background: none; font: inherit; font-size: 12px; color: var(--ink);
+}
+
+.pills { display: flex; gap: 8px; }
+.pill {
+    height: 38px; padding: 0 14px; display: grid; place-items: center; border-radius: 12px;
+    background: var(--white); border: 1px solid var(--line); font-size: 10px; font-weight: 600; white-space: nowrap;
+}
+.pill:hover { border-color: var(--rust); }
+.pill.is-active { background: var(--rust); border-color: var(--rust); color: var(--white); }
+
+.empty { padding: 28px; text-align: center; font-size: 12px; color: var(--muted); background: var(--white); border: 1px dashed var(--line); border-radius: 16px; }
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 860px) {
+    .shell { grid-template-columns: 1fr; }
+    .side { position: static; height: auto; }
+    .side__nav { flex-direction: row; flex-wrap: wrap; flex: none; }
+    .side__bottom { border-top: 0; padding-top: 0; }
+    .main { padding: 20px 16px 40px; }
+}
+
+@media (max-width: 520px) {
+    .actions { flex-direction: column; }
+    .pills { width: 100%; overflow-x: auto; }
+}

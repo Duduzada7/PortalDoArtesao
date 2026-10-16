@@ -8,9 +8,11 @@ use App\Http\Controllers\ArtesaoController;
 use App\Http\Controllers\FilaController;
 use App\Http\Controllers\AprovacaoController;
 use App\Http\Controllers\EspecialidadeController;
+use App\Http\Controllers\WelcomeController;
+
 
 // Páginas Públicas
-Route::view('/', 'welcome');
+Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 Route::get('/welcome', [EventController::class, 'index']);
 Route::get('/Eventos/list', [EventController::class, 'index'])->name('eventos.list');
 
