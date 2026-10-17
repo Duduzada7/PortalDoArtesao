@@ -162,7 +162,7 @@
                     <p class="empty empty--small">Nenhum evento aberto no momento.</p>
                 @endforelse
  
-                <a href="/eventos" class="btn-outline">Ver todos os eventos →</a>
+                <a href="/eventoscomunidade" class="btn-outline">Ver todos os eventos →</a>
             </section>
  
             <section class="cta">

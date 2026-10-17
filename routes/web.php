@@ -14,9 +14,12 @@ use App\Http\Controllers\AdminArtesaosController;
 
 // Páginas Públicas
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
-Route::get('/welcome', [EventController::class, 'index']);
-Route::get('/Eventos/list', [EventController::class, 'index'])->name('eventos.list');
+Route::get('/welcome', [WelcomeController::class, 'index']);
 
+Route::get('/eventos', [EventController::class, 'list'])->name('eventos.list');
+Route::get('/Eventos/list', [EventController::class, 'list']);
+// Listagem de eventos limpa para a comunidade externa
+Route::get('/eventoscomunidade', [EventController::class, 'comunidadeIndex']);
 // Autenticação
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);

@@ -15,7 +15,7 @@ class WelcomeController extends Controller
 
         $artesaos = Artesao::query()
             ->with('especialidades')
-            // ->where('StatusAprovacao', 'aprovado') // descomente e ajuste ao valor real
+            ->where('StatusAprovacao', 'aprovado') // traz apenas aprovados para o público
             ->when($busca !== '', function ($q) use ($busca) {
                 $q->where(function ($q) use ($busca) {
                     $q->where('Nome', 'like', "%{$busca}%")
@@ -30,13 +30,15 @@ class WelcomeController extends Controller
             ->orderBy('Nome')
             ->get();
 
-        // 'status' = 'aberto' é uma suposição; ajuste ao valor real do seu banco
-        $eventosAbertos = Evento::where('status', 'aberto');
+        // Traz eventos que NÃO estão marcados como encerrados
+        $eventosAbertos = Evento::where(function($q) {
+            $q->where('status', '!=', 'encerrado')
+              ->orWhereNull('status');
+        });
 
         $eventos = (clone $eventosAbertos)
-            ->whereDate('Dia', '>=', now())
-            ->orderBy('Dia')
-            ->take(3)
+            ->orderBy('Dia', 'asc')
+            ->take(5)
             ->get();
 
         $bairros = Artesao::whereNotNull('Bairro')->distinct()->orderBy('Bairro')->pluck('Bairro');
@@ -48,9 +50,9 @@ class WelcomeController extends Controller
             'especialidades' => $especialidades,
             'bairros'        => $bairros,
             'stats' => [
-                'artesaos'       => Artesao::count(),
+                'artesaos'       => Artesao::where('StatusAprovacao', 'aprovado')->count(),
                 'especialidades' => $especialidades->count(),
-                'eventos'        => $eventosAbertos->count(),
+                'eventos'        => (clone $eventosAbertos)->count(),
                 'bairros'        => $bairros->count(),
             ],
         ]);

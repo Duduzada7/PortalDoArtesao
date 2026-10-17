@@ -20,12 +20,26 @@ class EventController extends Controller
         return view('Eventos.list', ['eventos' => $eventos]);
     }
 
-    public function list()
-    {
-        $eventos = Evento::all();
-        return view('Eventos.list', ['eventos' => $eventos]);
-    }
+   // Método para visualização pública da comunidade
+public function list()
+{
+    $eventos = Evento::where('status', '!=', 'encerrado')
+        ->orWhereNull('status')
+        ->orderBy('Dia', 'asc')
+        ->get();
 
+    return view('Eventos.list', ['eventos' => $eventos]);
+}
+public function comunidadeIndex()
+{
+    // Busca apenas eventos que não estejam encerrados
+    $eventos = Evento::where('status', '!=', 'encerrado')
+        ->orWhereNull('status')
+        ->orderBy('Dia', 'asc')
+        ->get();
+
+    return view('Eventos.comunidade', compact('eventos'));
+}
     public function create()
     {
         if (session('user_type') !== 'adm') {
