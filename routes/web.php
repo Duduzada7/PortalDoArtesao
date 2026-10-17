@@ -9,6 +9,7 @@ use App\Http\Controllers\FilaController;
 use App\Http\Controllers\AprovacaoController;
 use App\Http\Controllers\EspecialidadeController;
 use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\AdminArtesaosController;
 
 
 // Páginas Públicas
@@ -34,7 +35,7 @@ Route::get('/artesao/dashboard', [ArtesaoController::class, 'dashboard']);
 Route::post('/artesao/candidatar/{id}', [ArtesaoController::class, 'candidatarEvento']);
 
 Route::prefix('admin')->group(function () {
-
+    Route::get('/artesaos', [AdminArtesaosController::class, 'index'])->name('admin.artesaos');
     // Dashboard
     Route::get('/dashboard', function () {
         if (session('user_type') !== 'adm') {

@@ -1,72 +1,76 @@
-@extends('layouts.main')
+@extends('layouts.admin')
 
-@section('title', 'Gerenciar Especialidades - Portal do Artesão')
+@section('title', 'Especialidades')
 
 @section('content')
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Gerenciar Especialidades</h2>
-                <a href="/admin/dashboard" class="btn btn-outline-secondary">Voltar ao Painel</a>
-            </div>
+    @php
+        $paleta = ['#c2531b', '#d6336c', '#7c3aed', '#059669', '#0891b2', '#7a2e12'];
+    @endphp
 
-            @if(session('msg'))
-                <div class="alert alert-success">{{ session('msg') }}</div>
-            @endif
+    <div class="page">
+        <p class="crumbs">Administração <span aria-hidden="true">→</span> Especialidades</p>
 
-            <!-- Form para nova especialidade -->
-            <div class="card mb-4 shadow-sm">
-                <div class="card-header bg-primary text-white fw-bold">Nova Especialidade</div>
-                <div class="card-body">
-                    <form action="/admin/especialidades" method="POST" class="row g-2">
-                        @csrf
-                        <div class="col-md-9">
-                            <input type="text" name="Nome" class="form-control" placeholder="Ex: Marcenaria, Saboaria, Macramê..." required>
-                        </div>
-                        <div class="col-md-3">
-                            <button type="submit" class="btn btn-success w-100">+ Adicionar</button>
-                        </div>
-                    </form>
+        <header class="page-title">
+            <h1><span aria-hidden="true">🏷️</span> Gerenciar Especialidades</h1>
+            <p>Cadastre e gerencie as áreas de atuação dos artesãos do sistema.</p>
+        </header>
+
+        @if (session('msg'))
+            <div class="flash" role="status">{{ session('msg') }}</div>
+        @endif
+        @if (session('error'))
+            <div class="flash flash--error" role="alert">{{ session('error') }}</div>
+        @endif
+
+        {{-- ========== NOVA ESPECIALIDADE ========== --}}
+        <section class="form-card form-card--compact" aria-labelledby="nova-esp">
+            <h2 id="nova-esp" class="form-card__title">Nova Especialidade</h2>
+
+            <form action="/admin/especialidades" method="POST" class="inline-form">
+                @csrf
+                <div class="field">
+                    <label for="Nome" class="sr-only">Nome da especialidade</label>
+                    <input type="text" id="Nome" name="Nome" value="{{ old('Nome') }}"
+                           class="@error('Nome') is-invalid @enderror"
+                           placeholder="Ex: Marcenaria, Saboaria, Macramê..." required>
+                    @error('Nome')
+                        <p class="field__error">{{ $message }}</p>
+                    @enderror
                 </div>
-            </div>
+                <button type="submit" class="btn-submit">+ Adicionar</button>
+            </form>
+        </section>
 
-            <!-- Tabela de Especialidades Existentes -->
-            <div class="card shadow-sm">
-                <div class="card-header bg-light fw-bold">Especialidades Cadastradas</div>
-                <div class="card-body p-0">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead>
-                            <tr>
-                                <th>#ID</th>
-                                <th>Nome da Especialidade</th>
-                                <th class="text-end">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($especialidades as $esp)
-                                <tr>
-                                    <td>{{ $esp->ID_Especialidade }}</td>
-                                    <td><strong>{{ $esp->Nome }}</strong></td>
-                                    <td class="text-end">
-                                        <form action="/admin/especialidades/{{ $esp->ID_Especialidade }}" method="POST" onsubmit="return confirm('Tem certeza que deseja remover esta especialidade?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="3" class="text-center py-3 text-muted">Nenhuma especialidade cadastrada até o momento.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+        {{-- ========== ESPECIALIDADES CADASTRADAS ========== --}}
+        <header class="col-head">
+            <h2>Especialidades Cadastradas</h2>
+            <span class="col-head__count">{{ $especialidades->count() }}</span>
+        </header>
+
+        <div class="insc-card">
+            @forelse ($especialidades as $esp)
+                <div class="insc-row">
+                    <span class="avatar avatar--sq" style="background: {{ $paleta[$esp->ID_Especialidade % count($paleta)] }}">
+                        {{ mb_strtoupper(mb_substr($esp->Nome, 0, 1)) }}
+                    </span>
+
+                    <div class="insc-row__main">
+                        <p class="insc-row__name">{{ $esp->Nome }}</p>
+                        <p class="insc-row__sub">Especialidade #{{ $esp->ID_Especialidade }}</p>
+                    </div>
+
+                    <div class="insc-row__end">
+                        <form action="/admin/especialidades/{{ $esp->ID_Especialidade }}" method="POST"
+                              onsubmit="return confirm('Tem certeza que deseja remover a especialidade {{ addslashes($esp->Nome) }}?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn-line btn-line--danger">Excluir</button>
+                        </form>
+                    </div>
                 </div>
-            </div>
-
+            @empty
+                <p class="insc-empty">Nenhuma especialidade cadastrada até o momento.</p>
+            @endforelse
         </div>
     </div>
-</div>
 @endsection

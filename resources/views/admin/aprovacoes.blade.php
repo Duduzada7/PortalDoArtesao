@@ -1,146 +1,188 @@
-@extends('layouts.main')
+@extends('layouts.admin')
 
-@section('title', 'Aprovações Pendentes - Portal do Artesão')
+@section('title', 'Inscrições')
 
 @section('content')
     @php
-        $tabAtiva = request('tab', 'artesaos'); // Se não vier parâmetro, a padrão é 'artesaos'
+        $paleta   = ['#c2531b', '#d6336c', '#7c3aed', '#059669', '#0891b2', '#7a2e12'];
+        $evFiltro = request('evento');
+
+        $iniciaisDe = function ($nome) {
+            $p = preg_split('/\s+/', trim($nome));
+            return mb_strtoupper(mb_substr($p[0], 0, 1) . (count($p) > 1 ? mb_substr(end($p), 0, 1) : ''));
+        };
+
+        // "15 a 17/07/2026", "05/08/2026 a 07/09/2026" ou só "15/07/2026"
+        $periodo = function ($inicio, $fim) {
+            if (!$inicio) return 'Sem data';
+            $i = \Carbon\Carbon::parse($inicio);
+            if (!$fim) return $i->format('d/m/Y');
+            $f = \Carbon\Carbon::parse($fim);
+            if ($i->isSameDay($f)) return $i->format('d/m/Y');
+            if ($i->format('m/Y') === $f->format('m/Y')) return $i->format('d') . ' a ' . $f->format('d/m/Y');
+            return $i->format('d/m/Y') . ' a ' . $f->format('d/m/Y');
+        };
+
+        $pendentesEventos = $eventosComCandidaturas->sum(
+            fn ($e) => $e->artesaos->filter(fn ($a) => $a->pivot->StatusDaCandidatura === 'Inscrito')->count()
+        );
+
+        $eventosVisiveis = $eventosComCandidaturas->when(
+            $evFiltro,
+            fn ($c) => $c->where('ID_Evento', (int) $evFiltro)
+        );
     @endphp
 
-    <div class="container my-5">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Solicitações Pendentes</h2>
-            <a href="/admin/dashboard" class="btn btn-outline-secondary">Voltar ao Painel</a>
-        </div>
+    <div class="page page--full">
+        <p class="crumbs">Administração <span aria-hidden="true">→</span> Inscrições</p>
 
-        @if(session('msg'))
-            <div class="alert alert-success">{{ session('msg') }}</div>
+        <header class="page-title">
+            <h1><span aria-hidden="true">📝</span> Gerenciar Inscrições</h1>
+            <p>Aprove ou recuse cadastros de artesãos e inscrições nos eventos.</p>
+        </header>
+
+        @if (session('msg'))
+            <div class="flash" role="status">{{ session('msg') }}</div>
+        @endif
+        @if (session('error'))
+            <div class="flash flash--error" role="alert">{{ session('error') }}</div>
         @endif
 
-        {{-- Navegação por Abas --}}
-        <ul class="nav nav-tabs" id="aprovacaoTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link fw-bold {{ $tabAtiva === 'artesaos' ? 'active' : '' }}" id="artesaos-tab"
-                    data-bs-toggle="tab" data-bs-target="#artesaos-pane" type="button" role="tab">
-                    Cadastros de Artesãos ({{ $artesaosPendentes->count() }})
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link fw-bold {{ $tabAtiva === 'eventos' ? 'active' : '' }}" id="eventos-tab"
-                    data-bs-toggle="tab" data-bs-target="#eventos-pane" type="button" role="tab">
-                    Candidaturas em Eventos ({{ $eventosComCandidaturas->sum(fn($e) => $e->artesaos->count()) }})
-                </button>
-            </li>
-        </ul>
+        <div class="split">
 
-        <div class="tab-content border border-top-0 p-4 bg-white rounded-bottom shadow-sm" id="aprovacaoTabsContent">
+            {{-- ========== COLUNA 1: CANDIDATURAS EM EVENTOS ========== --}}
+            <section class="split__col" aria-labelledby="col-eventos">
+                <header class="col-head">
+                    <h2 id="col-eventos">Candidaturas em Eventos</h2>
+                    <span class="col-head__count" title="Candidaturas pendentes">{{ $pendentesEventos }}</span>
+                </header>
 
-            {{-- ABA 1: ARTESÃOS PENDENTES NO SISTEMA --}}
-            <div class="tab-pane fade {{ $tabAtiva === 'artesaos' ? 'show active' : '' }}" id="artesaos-pane"
-                role="tabpanel">
-                <h4 class="mb-3">Novos Cadastros Aguardando Aprovação</h4>
+                <form action="/admin/aprovacoes" method="get" class="col-filter">
+                    <label for="filtro-evento" class="sr-only">Filtrar por evento</label>
+                    <select id="filtro-evento" name="evento" onchange="this.form.submit()">
+                        <option value="">Todos os eventos</option>
+                        @foreach ($eventosComCandidaturas as $ev)
+                            <option value="{{ $ev->ID_Evento }}" @selected((string) $evFiltro === (string) $ev->ID_Evento)>{{ $ev->Nome }}</option>
+                        @endforeach
+                    </select>
+                </form>
 
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Nome</th>
-                                <th>Contato</th>
-                                <th>Localização</th>
-                                <th class="text-end">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($artesaosPendentes as $artesao)
-                                <tr>
-                                    <td class="fw-bold">{{ $artesao->Nome }}</td>
-                                    <td>
-                                        <small class="d-block">Email: {{ $artesao->Email }}</small>
-                                        <small class="d-block">Tel: {{ $artesao->Telefone }}</small>
-                                    </td>
-                                    <td>{{ $artesao->Bairro ?? 'Não informado' }}</td>
-                                    <td class="text-end">
-                                        <form action="/admin/aprovacoes/artesao/{{ $artesao->ID_Artesao }}/aprovar"
-                                            method="POST" class="d-inline">
+                @forelse ($eventosVisiveis as $evento)
+                    @php
+                        $pendentesDoEvento = $evento->artesaos->filter(fn ($a) => $a->pivot->StatusDaCandidatura === 'Inscrito')->count();
+                    @endphp
+
+                    <article class="insc-card">
+                        <header class="insc-card__head">
+                            <div class="event__chips">
+                                @if ($evento->status === 'encerrado')
+                                    <span class="chip chip--closed">Encerrado</span>
+                                @endif
+                                @if ($pendentesDoEvento > 0)
+                                    <span class="chip chip--open">{{ $pendentesDoEvento }} {{ $pendentesDoEvento === 1 ? 'pendente' : 'pendentes' }}</span>
+                                @endif
+                            </div>
+                            <h3 class="insc-card__title">{{ $evento->Nome }}</h3>
+                            <p class="insc-card__meta">
+                                {{ $periodo($evento->Dia, $evento->DataFim) }}
+                                · {{ $evento->artesaos->count() }} {{ $evento->artesaos->count() === 1 ? 'inscrição' : 'inscrições' }}
+                            </p>
+                        </header>
+
+                        @foreach ($evento->artesaos as $artesao)
+                            @php
+                                $situacao = $artesao->pivot->StatusDaCandidatura;
+                                $inscritoEm = $artesao->pivot->created_at
+                                    ? \Carbon\Carbon::parse($artesao->pivot->created_at)->format('d/m/Y')
+                                    : null;
+                            @endphp
+
+                            <div class="insc-row">
+                                <span class="avatar avatar--md" style="background: {{ $paleta[$artesao->ID_Artesao % count($paleta)] }}">{{ $iniciaisDe($artesao->Nome) }}</span>
+
+                                <div class="insc-row__main">
+                                    <p class="insc-row__name">{{ $artesao->Nome }}</p>
+                                    <p class="insc-row__sub">
+                                        {{ $artesao->posicao_fila ? 'Fila #' . $artesao->posicao_fila : 'Sem posição na fila' }}
+                                        @if ($inscritoEm) · Inscrito em {{ $inscritoEm }} @endif
+                                        @if ($artesao->especialidades->isNotEmpty()) · {{ $artesao->especialidades->pluck('Nome')->implode(', ') }} @endif
+                                    </p>
+                                </div>
+
+                                <div class="insc-row__end">
+                                    @if ($situacao === 'Aprovado')
+                                        <span class="status status--ativo">Aprovado</span>
+                                    @elseif ($situacao === 'Recusado')
+                                        <span class="status status--recusado">Recusado</span>
+                                    @else
+                                        <span class="status status--pendente">Pendente</span>
+
+                                        <form action="/admin/aprovacoes/evento/{{ $evento->ID_Evento }}/artesao/{{ $artesao->ID_Artesao }}/aprovar" method="POST">
                                             @csrf
-                                            <button class="btn btn-sm btn-success">Aprovar</button>
+                                            <button type="submit" class="icon-btn icon-btn--ok" title="Aprovar vaga" aria-label="Aprovar vaga de {{ $artesao->Nome }}">✓</button>
                                         </form>
-                                        <form action="/admin/aprovacoes/artesao/{{ $artesao->ID_Artesao }}/recusar"
-                                            method="POST" class="d-inline">
+                                        <form action="/admin/aprovacoes/evento/{{ $evento->ID_Evento }}/artesao/{{ $artesao->ID_Artesao }}/recusar" method="POST"
+                                              onsubmit="return confirm('Recusar a vaga de {{ addslashes($artesao->Nome) }}?')">
                                             @csrf
-                                            <button class="btn btn-sm btn-outline-danger">Recusar</button>
+                                            <button type="submit" class="icon-btn icon-btn--no" title="Recusar vaga" aria-label="Recusar vaga de {{ $artesao->Nome }}">✕</button>
                                         </form>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="text-center py-4 text-muted">Nenhum cadastro de artesão pendente.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            {{-- ABA 2: CANDIDATURAS EM EVENTOS --}}
-            <div class="tab-pane fade {{ $tabAtiva === 'eventos' ? 'show active' : '' }}" id="eventos-pane" role="tabpanel">
-                <h4 class="mb-3">Inscrições em Eventos Aguardando Avaliação</h4>
-
-                @forelse($eventosComCandidaturas as $evento)
-                    <div class="card mb-4 border-secondary">
-                        <div class="card-header bg-light fw-bold">
-                            Evento: {{ $evento->Nome }}
-                        </div>
-                        <div class="card-body p-0">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead>
-                                    <tr>
-                                        <th class="ps-3">Artesão</th>
-                                        <th>Especialidade</th>
-                                        <th>Posição na Fila</th>
-                                        <th class="text-end pe-3">Ação</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($evento->artesaos as $artesao)
-                                        <tr>
-                                            <td class="ps-3 fw-bold">{{ $artesao->Nome }}</td>
-                                            <td>
-                                                {{ $artesao->especialidade->Nome ?? $artesao->Especialidade ?? '-' }}
-                                            </td>
-                                            <td>
-                                                <span class="badge bg-secondary">
-                                                    {{ $artesao->posicao_fila ? $artesao->posicao_fila . 'º' : 'Sem posição' }}
-                                                </span>
-                                            </td>
-                                            <td class="text-end pe-3">
-                                                <form
-                                                    action="/admin/aprovacoes/evento/{{ $evento->ID_Evento }}/artesao/{{ $artesao->ID_Artesao }}/aprovar"
-                                                    method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button class="btn btn-sm btn-success">Aprovar Vaga</button>
-                                                </form>
-                                                <form
-                                                    action="/admin/aprovacoes/evento/{{ $evento->ID_Evento }}/artesao/{{ $artesao->ID_Artesao }}/recusar"
-                                                    method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button class="btn btn-sm btn-outline-danger">Recusar Vaga</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </article>
                 @empty
-                    <p class="text-muted text-center py-4">Nenhuma candidatura pendente para eventos no momento.</p>
+                    <p class="empty">Nenhuma inscrição em eventos no momento.</p>
                 @endforelse
-            </div>
+            </section>
+
+            {{-- ========== COLUNA 2: CANDIDATURAS DE ARTESÃOS (CADASTROS) ========== --}}
+            <section class="split__col" aria-labelledby="col-artesaos">
+                <header class="col-head">
+                    <h2 id="col-artesaos">Candidaturas de Artesãos</h2>
+                    <span class="col-head__count" title="Cadastros pendentes">{{ $artesaosPendentes->count() }}</span>
+                </header>
+
+                <article class="insc-card">
+                    @forelse ($artesaosPendentes as $artesao)
+                        <div class="insc-row">
+                            <span class="avatar avatar--md" style="background: {{ $paleta[$artesao->ID_Artesao % count($paleta)] }}">{{ $iniciaisDe($artesao->Nome) }}</span>
+
+                            <div class="insc-row__main">
+                                <p class="insc-row__name">{{ $artesao->Nome }}</p>
+                                <p class="insc-row__sub">
+                                    {{ $artesao->Email }} · {{ $artesao->Telefone }}
+                                    @if ($artesao->Bairro) · {{ $artesao->Bairro }} @endif
+                                </p>
+                                @if ($artesao->especialidades->isNotEmpty())
+                                    <ul class="tags">
+                                        @foreach ($artesao->especialidades as $esp)
+                                            <li class="tag" style="--c: {{ $paleta[$esp->ID_Especialidade % count($paleta)] }}">{{ $esp->Nome }}</li>
+                                        @endforeach
+                                    </ul>
+                                @endif
+                            </div>
+
+                            <div class="insc-row__end">
+                                <span class="status status--pendente">Pendente</span>
+
+                                <form action="/admin/aprovacoes/artesao/{{ $artesao->ID_Artesao }}/aprovar" method="POST">
+                                    @csrf
+                                    <button type="submit" class="icon-btn icon-btn--ok" title="Aprovar cadastro" aria-label="Aprovar cadastro de {{ $artesao->Nome }}">✓</button>
+                                </form>
+                                <form action="/admin/aprovacoes/artesao/{{ $artesao->ID_Artesao }}/recusar" method="POST"
+                                      onsubmit="return confirm('Recusar o cadastro de {{ addslashes($artesao->Nome) }}?')">
+                                    @csrf
+                                    <button type="submit" class="icon-btn icon-btn--no" title="Recusar cadastro" aria-label="Recusar cadastro de {{ $artesao->Nome }}">✕</button>
+                                </form>
+                            </div>
+                        </div>
+                    @empty
+                        <p class="insc-empty">Nenhum cadastro de artesão pendente.</p>
+                    @endforelse
+                </article>
+            </section>
 
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 @endsection

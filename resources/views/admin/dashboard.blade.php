@@ -1,93 +1,88 @@
-@extends('layouts.main')
+@extends('layouts.admin')
 
-@section('title', 'Painel Administrativo - Portal do Artesão')
+@section('title', 'Painel do Administrador')
 
 @section('content')
-<div class="container my-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Painel do Administrador</h1>
-        <form action="/logout" method="POST">
-            @csrf
-            <button type="submit" class="btn btn-outline-danger">Sair</button>
-        </form>
-    </div>
+    @php
+        $pendentes = \App\Models\Artesao::where('StatusAprovacao', 'pendente')->count();
 
-    @if(session('user_nome'))
-        <div class="alert alert-info">
-            Bem-vindo, <strong>{{ session('user_nome') }}</strong>!
-        </div>
-    @endif
+        $cards = [
+            [
+                'icon'  => '🎪',
+                'title' => 'Novo Evento',
+                'text'  => 'Cadastre uma nova feira ou exposição.',
+                'href'  => '/admin/eventos/criar',
+                'cta'   => 'Criar novo evento',
+            ],
+            [
+                'icon'  => '📅',
+                'title' => 'Lista de Eventos',
+                'text'  => 'Veja e gerencie todos os eventos cadastrados.',
+                'href'  => '/admin/eventos',
+                'cta'   => 'Ver eventos',
+            ],
+            [
+                'icon'  => '📋',
+                'title' => 'Fila de Prioridade',
+                'text'  => 'Acompanhe a ordem e rotatividade dos artesãos credenciados.',
+                'href'  => '/admin/fila',
+                'cta'   => 'Ver fila',
+            ],
+            [
+                'icon'  => '🏷️',
+                'title' => 'Especialidades',
+                'text'  => 'Cadastre e gerencie as áreas de atuação dos artesãos do sistema.',
+                'href'  => '/admin/especialidades',
+                'cta'   => 'Gerenciar especialidades',
+            ],
+            [
+                'icon'  => '👥',
+                'title' => 'Aprovações',
+                'text'  => 'Avalie os cadastros de artesãos pendentes e acompanhe os aprovados.',
+                'href'  => '/admin/artesaos',
+                'cta'   => 'Ver pendentes',
+                'badge' => $pendentes,
+            ],
+            [
+                'icon'  => '🛡️',
+                'title' => 'Administradores',
+                'text'  => 'Cadastre outros gestores da prefeitura.',
+                'href'  => '/admin/gerenciar-adms',
+                'cta'   => 'Gerenciar ADMs',
+            ],
+        ];
+    @endphp
 
-    <div class="row">
-        <!-- Card 1: Criar Evento -->
-        <div class="col-md-4 mb-3">
-            <div class="card text-center p-3 shadow-sm h-100">
-                <h3>Novo Evento</h3>
-                <p class="text-muted">Cadastre uma nova feira ou exposição.</p>
-                <div class="mt-auto">
-                    <a href="/admin/eventos/criar" class="btn btn-primary w-100">Criar Novo Evento</a>
-                </div>
-            </div>
-        </div>
+    <div class="page page--wide">
+        <p class="crumbs">Administração <span aria-hidden="true">→</span> Painel</p>
 
-        <!-- Card 2: Listar Eventos -->
-        <div class="col-md-4 mb-3">
-            <div class="card text-center p-3 shadow-sm h-100">
-                <h3>Lista de Eventos</h3>
-                <p class="text-muted">Veja e gerencie todos os eventos cadastrados.</p>
-                <div class="mt-auto">
-                    <a href="/admin/eventos" class="btn btn-secondary w-100">Ver Eventos</a>
-                </div>
-            </div>
-        </div>
-        <!-- Ver a fila -->
-        <div class="col-md-4 mb-4">
-    <div class="card h-100 shadow-sm border-0">
-        <div class="card-body text-center d-flex flex-column justify-content-between">
-            <div>
-                <h5 class="card-title fw-bold">Fila de Prioridade</h5>
-                <p class="card-text text-muted">Acompanhe a ordem e rotatividade dos artesãos credenciados.</p>
-            </div>
-            <a href="/admin/fila" class="btn btn-dark w-100 mt-3">Ver Fila</a>
-        </div>
-    </div>
-</div>
-<!-- Card Gerenciar Especialidades -->
-<div class="col-md-4 mb-4">
-    <div class="card shadow-sm h-100">
-        <div class="card-body text-center d-flex flex-column justify-content-between">
-            <div>
-                <h4 class="card-title fw-bold">Especialidades</h4>
-                <p class="card-text text-muted">
-                    Cadastre e gerencie as áreas de atuação dos artesãos do sistema.
-                </p>
-            </div>
-            <a href="/admin/especialidades" class="btn btn-purple text-white w-100 fw-bold mt-3" style="background-color: #6f42c1;">
-                Gerenciar Especialidades
-            </a>
+        @if (session('msg'))
+            <div class="flash" role="status">{{ session('msg') }}</div>
+        @endif
+
+        <header class="dash-head">
+            <h1>Painel do Administrador</h1>
+            @if (session('user_nome'))
+                <p>Bem-vindo, <strong>{{ session('user_nome') }}</strong>!</p>
+            @endif
+        </header>
+
+        <div class="dash-grid">
+            @foreach ($cards as $card)
+                <article class="dash-card">
+                    <div class="dash-card__top">
+                        <span class="dash-card__icon" aria-hidden="true">{{ $card['icon'] }}</span>
+                        @if (!empty($card['badge']))
+                            <span class="dash-card__badge">{{ $card['badge'] }} {{ $card['badge'] === 1 ? 'pendente' : 'pendentes' }}</span>
+                        @endif
+                    </div>
+
+                    <h2>{{ $card['title'] }}</h2>
+                    <p>{{ $card['text'] }}</p>
+
+                    <a href="{{ $card['href'] }}" class="dash-card__btn">{{ $card['cta'] }}</a>
+                </article>
+            @endforeach
         </div>
     </div>
-</div>
-      
-       <!-- Card 3: Aprovações -->
-<div class="col-md-4 mb-3">
-    <div class="card text-center p-3 shadow-sm h-100">
-        <h3>Aprovações</h3>
-        <p class="text-muted">Avalie cadastros de artesãos e candidaturas pendentes.</p>
-        <div class="mt-auto">
-            <a href="/admin/aprovacoes" class="btn btn-warning w-100 fw-bold">Ver Pendentes</a>
-        </div>
-    </div>
-</div>
-    </div>
-    <div class="col-md-4 mb-3">
-    <div class="card text-center p-3 shadow-sm h-100">
-        <h3>Administradores</h3>
-        <p class="text-muted">Cadastre outros gestores da prefeitura.</p>
-        <div class="mt-auto">
-            <a href="/admin/gerenciar-adms" class="btn btn-info text-white w-100">Gerenciar ADMs</a>
-        </div>
-    </div>
-</div>
-</div>
 @endsection

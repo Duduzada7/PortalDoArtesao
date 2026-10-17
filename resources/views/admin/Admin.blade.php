@@ -24,6 +24,8 @@
             ['label' => 'Eventos',             'icon' => '🎪', 'href' => '/admin/eventos',    'match' => 'admin/eventos*',    'count' => 0],
             ['label' => 'Fila de Prioridade',  'icon' => '📋', 'href' => '/admin/fila',       'match' => 'admin/fila*',       'count' => 0],
             ['label' => 'Inscrições',          'icon' => '📝', 'href' => '/admin/aprovacoes?tab=eventos', 'match' => 'admin/aprovacoes*', 'count' => $contInscricoes],
+            ['label' => 'Especialidades',      'icon' => '🏷️', 'href' => '/admin/especialidades', 'match' => 'admin/especialidades*', 'count' => 0],
+            ['label' => 'Administradores',     'icon' => '🛡️', 'href' => '/admin/gerenciar-adms', 'match' => 'admin/gerenciar-adms*', 'count' => 0],
         ];
     @endphp
 

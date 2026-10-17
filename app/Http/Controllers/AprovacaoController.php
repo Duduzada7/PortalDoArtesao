@@ -8,27 +8,31 @@ use App\Models\Evento;
 
 class AprovacaoController extends Controller
 {
-    // Listagem geral de pendências (Artesãos e Candidaturas)
+    // Tela de Inscrições: cadastros de artesãos pendentes + candidaturas em eventos
     public function index()
-{
-    // 1. Artesãos aguardando aprovação no sistema
-    $artesaosPendentes = Artesao::where('StatusAprovacao', 'pendente')->get();
+    {
+        // 1. Artesãos aguardando aprovação no sistema
+        $artesaosPendentes = Artesao::with('especialidades')
+            ->where('StatusAprovacao', 'pendente')
+            ->get();
 
-    // 2. Eventos que possuem candidaturas com status 'Inscrito'
-    $eventosComCandidaturas = Evento::whereHas('artesaos', function($q) {
-        $q->where('candidatura.StatusDaCandidatura', 'Inscrito');
-    })->with(['artesaos' => function($q) {
-        $q->where('candidatura.StatusDaCandidatura', 'Inscrito');
-    }])->get();
+        // 2. Eventos com candidaturas (em qualquer situação: Inscrito, Aprovado ou Recusado).
+        //    A view separa o que está pendente ('Inscrito') do que já foi decidido.
+        $eventosComCandidaturas = Evento::whereHas('artesaos')
+            ->with(['artesaos' => function ($q) {
+                $q->with('especialidades')->orderBy('artesao.posicao_fila');
+            }])
+            ->orderByDesc('Dia')
+            ->get();
 
-    return view('admin.aprovacoes', compact('artesaosPendentes', 'eventosComCandidaturas'));
-}
+        return view('admin.aprovacoes', compact('artesaosPendentes', 'eventosComCandidaturas'));
+    }
 
     // Aprovar Cadastro do Artesão no Sistema
     public function aprovarArtesao(Request $request, $id)
     {
         $artesao = Artesao::findOrFail($id);
-        
+
         // Define a última posição da fila para o novo artesão
         $ultimaPosicao = Artesao::max('posicao_fila') ?? 0;
 
@@ -51,29 +55,28 @@ class AprovacaoController extends Controller
     }
 
     // Aprovar Candidatura do Artesão em um Evento
-    // Aprovar Candidatura do Artesão em um Evento
-public function aprovarCandidatura($eventoId, $artesaoId)
-{
-    $evento = Evento::findOrFail($eventoId);
-    
-    $evento->artesaos()->updateExistingPivot($artesaoId, [
-        'StatusDaCandidatura' => 'Aprovado'
-    ]);
+    public function aprovarCandidatura($eventoId, $artesaoId)
+    {
+        $evento = Evento::findOrFail($eventoId);
 
-    // Redireciona mantendo a aba 'eventos' ativa
-    return redirect('/admin/aprovacoes?tab=eventos')->with('msg', 'Candidatura aprovada para o evento!');
-}
+        $evento->artesaos()->updateExistingPivot($artesaoId, [
+            'StatusDaCandidatura' => 'Aprovado'
+        ]);
 
-// Recusar Candidatura do Artesão em um Evento
-public function recusarCandidatura($eventoId, $artesaoId)
-{
-    $evento = Evento::findOrFail($eventoId);
-    
-    $evento->artesaos()->updateExistingPivot($artesaoId, [
-        'StatusDaCandidatura' => 'Recusado'
-    ]);
+        // Redireciona mantendo a aba 'eventos' ativa
+        return redirect('/admin/aprovacoes?tab=eventos')->with('msg', 'Candidatura aprovada para o evento!');
+    }
 
-    // Redireciona mantendo a aba 'eventos' ativa
-    return redirect('/admin/aprovacoes?tab=eventos')->with('msg', 'Candidatura recusada.');
-}
+    // Recusar Candidatura do Artesão em um Evento
+    public function recusarCandidatura($eventoId, $artesaoId)
+    {
+        $evento = Evento::findOrFail($eventoId);
+
+        $evento->artesaos()->updateExistingPivot($artesaoId, [
+            'StatusDaCandidatura' => 'Recusado'
+        ]);
+
+        // Redireciona mantendo a aba 'eventos' ativa
+        return redirect('/admin/aprovacoes?tab=eventos')->with('msg', 'Candidatura recusada.');
+    }
 }
